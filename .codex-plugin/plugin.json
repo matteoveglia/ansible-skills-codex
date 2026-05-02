@@ -3,10 +3,10 @@
 	"version": "1.0.0",
 	"description": "Reusable Ansible automation skills for Codex: playbook development, debugging, shell conversion, and guided setup.",
 	"author": {
-		"name": "sigridjineth"
+		"name": "matteoveglia"
 	},
-	"homepage": "https://github.com/sigridjineth/hello-ansible-skills",
-	"repository": "https://github.com/sigridjineth/hello-ansible-skills",
+	"homepage": "https://github.com/matteoveglia/ansible-skills-codex",
+	"repository": "https://github.com/matteoveglia/ansible-skills-codex",
 	"license": "MIT",
 	"keywords": [
 		"ansible",
@@ -22,7 +22,7 @@
 		"displayName": "Ansible Codex",
 		"shortDescription": "Ansible playbook, debugging, conversion, and setup skills for Codex.",
 		"longDescription": "A Codex plugin that packages focused Ansible skills for creating playbooks and roles, diagnosing failures, converting shell automation into idempotent tasks, and guiding new project setup.",
-		"developerName": "sigridjineth",
+		"developerName": "matteoveglia",
 		"category": "Developer Tools",
 		"capabilities": ["Read", "Write"],
 		"defaultPrompt": [

@@ -13,7 +13,7 @@ The plugin is intentionally instruction-only. It does not bundle MCP servers, ap
 ### From GitHub
 
 ```bash
-codex plugin marketplace add sigridjineth/hello-ansible-skills
+codex plugin marketplace add matteoveglia/ansible-skills-codex
 ```
 
 Then open Codex, run `/plugins`, choose the `Ansible Codex` marketplace, and install `ansible-codex`.
@@ -23,8 +23,8 @@ Then open Codex, run `/plugins`, choose the `Ansible Codex` marketplace, and ins
 Clone the repository and add it as a local marketplace:
 
 ```bash
-git clone https://github.com/sigridjineth/hello-ansible-skills.git
-cd hello-ansible-skills
+git clone https://github.com/matteoveglia/ansible-skills-codex.git
+cd ansible-skills-codex
 codex plugin marketplace add ./
 ```
 
