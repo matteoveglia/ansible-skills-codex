@@ -1,6 +1,6 @@
 {
 	"name": "ansible-codex",
-	"version": "1.1.0",
+	"version": "1.1.1",
 	"description": "Reusable Ansible automation skills for Codex: playbook development, debugging, shell conversion, guided setup, linting, secrets, and collection management.",
 	"author": {
 		"name": "matteoveglia"
@@ -23,8 +23,8 @@
 	"skills": "./skills/",
 	"interface": {
 		"displayName": "Ansible Codex",
-		"shortDescription": "Ansible playbook, debugging, linting, secrets, collections, conversion, and setup skills for Codex.",
-		"longDescription": "A Codex plugin that packages focused Ansible skills for creating playbooks and roles, diagnosing failures, converting shell automation into idempotent tasks, validating content with ansible-lint, managing secrets with Vault, handling collections, and guiding new project setup.",
+		"shortDescription": "Current-stable Ansible 13 playbook, debugging, linting, secrets, collections, conversion, and setup skills for Codex.",
+		"longDescription": "A Codex plugin that packages focused Ansible skills aligned to current-stable Ansible 13 / ansible-core 2.20 for creating playbooks and roles, diagnosing failures, converting shell automation into idempotent tasks, validating content with ansible-lint, managing secrets with Vault, handling collections, and guiding new project setup.",
 		"developerName": "matteoveglia",
 		"category": "Developer Tools",
 		"capabilities": ["Read", "Write"],

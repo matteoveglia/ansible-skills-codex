@@ -43,6 +43,8 @@ ansible --version
 ansible-galaxy collection list
 ```
 
+For current-stable Ansible 13, the controller should run Python 3.12+ and managed nodes should generally provide Python 3.9+ for normal module execution.
+
 ### Phase 2: Project Setup
 
 Create minimal structure:
@@ -69,6 +71,7 @@ become_method = sudo
 ```
 
 Keep `host_key_checking` enabled by default. Disable it only for short-lived lab hosts where trust-on-first-use is intentionally not required.
+Do not set `transport = smart`; that deprecated selector was removed in Ansible 13.
 
 **requirements.yml:**
 
@@ -132,7 +135,7 @@ Start simple, add one task at a time:
   tasks:
     - name: Show OS info
       ansible.builtin.debug:
-        msg: "{{ ansible_distribution }} {{ ansible_distribution_version }}"
+        msg: "{{ ansible_facts['distribution'] }} {{ ansible_facts['distribution_version'] }}"
 ```
 
 Run:
@@ -201,6 +204,7 @@ Keep secret variable names clearly distinct, such as `vault_app_password`, then 
 - Not testing SSH before writing playbooks
 - Hiding broad failures with `ignore_errors`
 - Putting secrets in plaintext inventory
+- Using injected top-level facts in new content instead of `ansible_facts[...]`
 - Using `{{ }}` inside `when`, `failed_when`, `changed_when`, or `assert.that`
 
 ## Communication Pattern

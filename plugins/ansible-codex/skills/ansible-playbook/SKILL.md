@@ -1,6 +1,6 @@
 ---
 name: ansible-playbook
-description: "Use when: creating Ansible playbooks, roles, tasks, handlers, inventories, group_vars, host_vars, ansible.cfg, or reusable automation. Covers idempotency, FQCN modules, collections, variables, handlers, check mode, Ansible 12 templating compatibility, and validation workflows."
+description: "Use when: creating Ansible playbooks, roles, tasks, handlers, inventories, group_vars, host_vars, ansible.cfg, or reusable automation. Covers idempotency, FQCN modules, collections, variables, handlers, check mode, Ansible 13 / ansible-core 2.20 guidance, stricter 2.19+ templating behavior, and validation workflows."
 argument-hint: "Describe the infrastructure task, target OSes, inventory shape, and desired playbook or role output."
 ---
 
@@ -18,7 +18,7 @@ Ansible playbooks declare desired system state rather than imperative command se
 - Choosing modules and collections
 - Reviewing YAML, conditionals, variables, and handler behavior
 - Understanding variable precedence
-- Preparing playbooks for Ansible 12 / ansible-core 2.19+ templating behavior
+- Preparing playbooks for current-stable Ansible 13 / ansible-core 2.20 behavior
 
 ## Project Structure
 
@@ -62,6 +62,7 @@ become_method = sudo
 ```
 
 Set `become: true` at the play or task level when elevated privileges are actually required. Avoid disabling `host_key_checking` except for disposable labs.
+Do not set `transport = smart`; the deprecated `smart` transport selector was removed in Ansible 13.
 
 ## Collection Requirements
 
@@ -113,9 +114,16 @@ Lowest to highest for common playbook work:
 
 Avoid role `vars/main.yml` for values users should override. Prefer role defaults and document expected variables in `README.md` or `meta/argument_specs.yml` for roles.
 
-## Ansible 12 / ansible-core 2.19+ Templating
+## Ansible 13 / ansible-core 2.20 Compatibility
 
-Modern Ansible is stricter about templates and conditionals. Generate content with these rules:
+Ansible 13 is based on ansible-core 2.20. Generate new content with the current stable baseline in mind:
+
+- Controller Python must be 3.12+.
+- Managed nodes generally need Python 3.9+ for normal module execution.
+- Prefer `ansible_facts[...]` in new content. `INJECT_FACTS_AS_VARS` is deprecated and will change default behavior in ansible-core 2.24.
+- `include_vars.ignore_files` must be a list, not a string.
+- If `failed_when` suppresses an error, the result key is now `failed_when_suppressed_exception`.
+- Modern Ansible is stricter about templates and conditionals. Generate content with these rules:
 
 - `when`, `failed_when`, `changed_when`, and `assert.that` are raw Jinja expressions. Do not wrap variables in `{{ }}` there.
 - Conditionals must produce booleans, not truthy strings, lists, or dictionaries.
@@ -195,6 +203,8 @@ Use `ignore_unreachable` for unreachable hosts; `ignore_errors` does not handle 
 | Secrets in vars or templates | Use `ansible-vault`, external secret lookups, `no_log: true`, and `diff: false` |
 | Global `become = True` | Set privilege escalation only where needed |
 | `stdout_callback = yaml` | Use `ansible.builtin.default` with `callback_result_format = yaml` |
+| Top-level injected facts in new content | Prefer `ansible_facts['distribution']`-style access |
+| `transport = smart` | Remove it; Ansible 13 no longer supports the `smart` transport selector |
 | Truthy string conditionals | Make conditions explicit booleans |
 
 ## Verification Commands

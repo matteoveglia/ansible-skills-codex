@@ -71,6 +71,8 @@ ansible-vault create --vault-id production@prompt inventories/production/group_v
 ansible-playbook playbooks/site.yml --vault-id production@prompt
 ```
 
+In Ansible 13, the deprecated `vaultid` parameter was removed from the `vault` and `unvault` filters. Pick the Vault ID via `--vault-id`, configuration, or password sources instead of relying on filter arguments.
+
 ## CI and Automation
 
 Prefer secret managers or CI-provided secret files over committing password files. If a vault password file is used, never commit it.

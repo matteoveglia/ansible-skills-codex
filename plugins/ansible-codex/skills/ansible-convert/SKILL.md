@@ -9,6 +9,7 @@ argument-hint: "Paste the script or procedure and include target OSes, privilege
 ## Overview
 
 Shell scripts execute commands imperatively; Ansible declares desired state. Conversion means rethinking operations as state declarations, not translating commands line-by-line. The goal is idempotency: running twice produces the same result without unintended changes.
+Target the current stable baseline while converting: Ansible 13 runs on ansible-core 2.20 and keeps the stricter conditional behavior introduced in 2.19.
 
 ## When to Use
 
@@ -83,10 +84,10 @@ fi
   ansible.builtin.apt:
     name: nginx
     state: present
-  when: ansible_os_family == "Debian"
+  when: ansible_facts['os_family'] == "Debian"
 ```
 
-Conditionals must evaluate to booleans in Ansible 12 / ansible-core 2.19+. Avoid truthy strings and avoid `{{ }}` in `when`, `failed_when`, and `changed_when`.
+Conditionals must evaluate to booleans in current-stable Ansible 13. Avoid truthy strings and avoid `{{ }}` in `when`, `failed_when`, and `changed_when`.
 
 ### Loops
 
@@ -127,6 +128,7 @@ Use dictionaries for multi-field loops:
 5. Use `block`/`rescue`/`always` only for real recovery or cleanup flows.
 6. Add `no_log: true` and `diff: false` around secrets.
 7. Validate with `ansible-lint`, syntax check, check mode, and a second real run.
+8. Test on a controller with Python 3.12+ and, where possible, against managed nodes with Python 3.9+.
 
 ## Command and Shell Triage
 

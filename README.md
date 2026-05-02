@@ -2,6 +2,8 @@
 
 Reusable Ansible automation skills for Codex: playbook development, debugging, shell conversion, guided setup, linting, secrets, and collection management.
 
+The skill content is aligned to the current stable Ansible community docs: Ansible 13 on ansible-core 2.20 as of May 2026.
+
 ## What This Provides
 
 This repository is a Codex plugin. It packages focused Ansible skills that Codex can invoke explicitly with `$` or select automatically when the task matches a skill description.
@@ -56,7 +58,7 @@ Core playbook development reference. Use when creating playbooks, roles, or inve
 - Variable precedence rules
 - Handlers and error handling
 - Collection requirements and modern callback configuration
-- Ansible 12 / ansible-core 2.19+ templating compatibility
+- Ansible 13 / ansible-core 2.20 guidance, including stricter 2.19+ templating behavior
 - Common mistakes and fixes
 
 ### ansible-debug
@@ -68,7 +70,7 @@ Troubleshooting guide for Ansible errors. Use when playbooks fail with connectio
 - Verbosity levels and debugging commands
 - Common error patterns and solutions
 - Privilege escalation and unreachable-host handling
-- Ansible 12 templating and conditional errors
+- Ansible 13 upgrade issues: Python support, conditionals, and result-key changes
 - Performance debugging
 
 ### ansible-convert
@@ -101,7 +103,7 @@ Validation workflow for playbooks, roles, inventories, and CI. Use when checking
 **Covers:**
 - ansible-lint and syntax-check order
 - Common rule fixes such as FQCN, no-changed-when, and risky file permissions
-- Ansible 12 compatibility checks
+- Ansible 13 / ansible-core 2.20 compatibility checks
 - Minimal CI example
 
 ### ansible-vault
@@ -111,6 +113,7 @@ Secrets workflow for encrypted variables and safe task output. Use when adding c
 **Covers:**
 - Vault file layout and naming conventions
 - `--ask-vault-pass` and `--vault-id` workflows
+- Ansible 13 Vault filter compatibility notes
 - `no_log: true` and `diff: false`
 - Secret migration and troubleshooting
 
@@ -122,7 +125,7 @@ Collection dependency workflow. Use when choosing modules, writing `requirements
 - Galaxy and Automation Hub dependency patterns
 - FQCN usage and `ansible-doc` lookup
 - Version pinning and adjacent collections
-- Upgrade and porting workflow
+- Upgrade workflow, including Galaxy v3 API expectations in Ansible 13
 
 ## Usage Examples
 

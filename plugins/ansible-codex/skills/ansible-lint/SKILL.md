@@ -1,6 +1,6 @@
 ---
 name: ansible-lint
-description: "Use when: validating Ansible playbooks, roles, collections, tasks, inventories, or CI before execution. Covers ansible-lint, syntax checks, check mode, idempotency, FQCN, risky file permissions, no-changed-when, Ansible 12 compatibility, and remediation workflow."
+description: "Use when: validating Ansible playbooks, roles, collections, tasks, inventories, or CI before execution. Covers ansible-lint, syntax checks, check mode, idempotency, FQCN, risky file permissions, no-changed-when, Ansible 13 / ansible-core 2.20 compatibility, and remediation workflow."
 argument-hint: "Describe the Ansible content to validate, lint output, CI failure, or target repository layout."
 ---
 
@@ -14,7 +14,7 @@ argument-hint: "Describe the Ansible content to validate, lint output, CI failur
 
 - Reviewing generated playbooks, roles, or tasks
 - Fixing `ansible-lint` CI failures
-- Preparing content for Ansible 12 / ansible-core 2.19+ templating changes
+- Preparing content for current-stable Ansible 13 / ansible-core 2.20
 - Checking FQCN usage, idempotency, risky permissions, and command/shell tasks
 - Adding a validation workflow to a new Ansible project
 
@@ -70,22 +70,41 @@ warn_list:
 
 If a rule must be skipped, prefer a narrow inline or file-level justification over disabling it globally.
 
-## Ansible 12 Compatibility Checks
+## Ansible 13 / ansible-core 2.20 Compatibility Checks
+
+Lint against current-stable Ansible when practical. For Ansible 13, check these areas explicitly:
 
 Pay special attention to conditionals and templating:
 
 ```yaml
 # Good
-when: app_enabled | bool
-failed_when: command_result.rc != 0 or 'ERROR' in command_result.stderr
-changed_when: command_result.rc == 0 and 'changed' in command_result.stdout
+- ansible.builtin.command: /usr/bin/example
+  register: command_result
+  when: app_enabled | bool
+  failed_when: command_result.rc != 0 or 'ERROR' in command_result.stderr
+  changed_when: command_result.rc == 0 and 'changed' in command_result.stdout
+
+- ansible.builtin.debug:
+    msg: "{{ ansible_facts['distribution'] }}"
+
+- ansible.builtin.include_vars:
+    dir: vars/
+    ignore_files:
+      - ".gitkeep"
 
 # Avoid
-when: "{{ app_enabled }}"
-failed_when: "{{ command_result.rc != 0 }}"
+- ansible.builtin.command: /usr/bin/example
+  register: command_result
+  when: "{{ app_enabled }}"
+  failed_when: "{{ command_result.rc != 0 }}"
+
+- ansible.builtin.include_vars:
+    dir: vars/
+    ignore_files: ".gitkeep"
 ```
 
 Conditionals must return booleans. Do not rely on non-empty strings, dicts, or lists being truthy.
+Also remove `transport = smart` from `ansible.cfg`; Ansible 13 removed that deprecated transport selector.
 
 ## CI Baseline
 
@@ -102,7 +121,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.x'
+          python-version: '3.12'
       - run: python -m pip install --upgrade ansible ansible-lint
       - run: ansible-galaxy collection install -r requirements.yml
         if: hashFiles('requirements.yml') != ''

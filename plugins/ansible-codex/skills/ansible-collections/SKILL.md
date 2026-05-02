@@ -1,6 +1,6 @@
 ---
 name: ansible-collections
-description: "Use when: choosing, installing, pinning, upgrading, or troubleshooting Ansible collections and roles with requirements.yml, ansible-galaxy, FQCN modules, adjacent collections, Automation Hub or Galaxy sources, version ranges, signatures, and Ansible porting compatibility."
+description: "Use when: choosing, installing, pinning, upgrading, or troubleshooting Ansible collections and roles with requirements.yml, ansible-galaxy, FQCN modules, adjacent collections, Automation Hub or Galaxy sources, version ranges, signatures, and Ansible 13 / ansible-core 2.20 porting compatibility."
 argument-hint: "Describe needed modules, current requirements.yml, installed collections, Ansible version, and target platform."
 ---
 
@@ -8,7 +8,7 @@ argument-hint: "Describe needed modules, current requirements.yml, installed col
 
 ## Overview
 
-Collections package Ansible modules, plugins, roles, and docs. Use `requirements.yml` to make dependencies reproducible and use FQCNs so generated playbooks point to the intended module.
+Collections package Ansible modules, plugins, roles, and docs. Use `requirements.yml` to make dependencies reproducible and use FQCNs so generated playbooks point to the intended module. Current stable Ansible is version 13 on ansible-core 2.20.
 
 ## When to Use
 
@@ -107,6 +107,7 @@ url = https://galaxy.ansible.com/
 ```
 
 Do not put credentials in repository files. Use environment variables, CI secrets, netrc, or runner-level configuration.
+Ansible 13 removed support for the Galaxy v2 server API. Any Galaxy-compatible server used for collections must support v3.
 
 ## Signature Awareness
 
@@ -120,7 +121,8 @@ If your organization requires signed collections, configure a GnuPG keyring and 
 | Module option not recognized | Collection version mismatch | Check `ansible-galaxy collection list` and pin compatible version |
 | Works locally, fails in CI | CI did not install requirements | Add `ansible-galaxy install -r requirements.yml` |
 | Deprecated module warning | Collection moved or module renamed | Update FQCN and requirements |
-| Upgrade breaks templates | ansible-core 2.19+ templating stricter | Run ansible-lint and porting checks |
+| Private Galaxy server stops working after upgrade | Server only supports the removed Galaxy v2 API | Move to a server that supports the Galaxy v3 API |
+| Upgrade breaks templates or fact access | Ansible 13 retains stricter 2.19+ templating and deprecates injected facts | Run ansible-lint, switch new content to `ansible_facts[...]`, and review the porting guide |
 
 ## Upgrade Workflow
 

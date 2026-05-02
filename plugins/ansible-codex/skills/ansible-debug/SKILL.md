@@ -1,6 +1,6 @@
 ---
 name: ansible-debug
-description: "Use when: debugging Ansible failures, UNREACHABLE hosts, SSH authentication, become/sudo errors, MODULE FAILURE, undefined variables, template errors, ansible-core 2.19 templating changes, changed_when/failed_when issues, or slow playbooks."
+description: "Use when: debugging Ansible failures, UNREACHABLE hosts, SSH authentication, become/sudo errors, MODULE FAILURE, undefined variables, template errors, Ansible 13 / ansible-core 2.20 upgrade issues, changed_when/failed_when problems, or slow playbooks."
 argument-hint: "Paste the failing command, error output, inventory snippet, Ansible version, and target OS."
 ---
 
@@ -17,7 +17,7 @@ Ansible errors usually fall into connection, authentication, privilege escalatio
 - MODULE FAILURE messages
 - Undefined variable errors
 - Template rendering failures
-- Broken conditionals after Ansible 12 / ansible-core 2.19 upgrades
+- Broken conditionals or runtime assumptions after Ansible 13 / ansible-core 2.20 upgrades
 - Incorrect changed/failed reporting
 - Slow playbook execution
 
@@ -100,7 +100,14 @@ Check whether the FQCN is installed, the collection version matches the playbook
 
 For conditionals, do not use `{{ }}`. `when`, `failed_when`, `changed_when`, and `assert.that` are already Jinja expressions.
 
-## Ansible 12 / ansible-core 2.19+ Template Failures
+## Ansible 13 / ansible-core 2.20 Upgrade Failures
+
+Before chasing playbook logic, confirm the runtime baseline:
+
+- The controller running Ansible must use Python 3.12+.
+- Managed nodes should provide Python 3.9+ for normal module execution.
+
+Common upgrade-related failures:
 
 | Error Pattern | Likely Cause | Fix |
 |---------------|--------------|-----|
@@ -108,6 +115,9 @@ For conditionals, do not use `{{ }}`. `when`, `failed_when`, `changed_when`, and
 | `Template delimiters are not supported in expressions` | `{{ }}` inside `when`/`assert`/`failed_when` | Use the variable directly |
 | `Type 'range' is unsupported for variable storage` | `range()` returned without conversion | Add `| list` or consume inline |
 | Undefined value appears later than before | Lazy templating exposes nested undefineds | Access the correct nested path or set defaults |
+| `result.exception` is missing after `failed_when: false` | ansible-core 2.20 renamed the field | Check `result.failed_when_suppressed_exception` instead |
+| `ignore_files` type error in `include_vars` | A string was passed where a list is now required | Use `ignore_files: [".gitkeep"]` |
+| Deprecation warnings for top-level facts | New content still uses injected fact names | Prefer `ansible_facts[...]` in new playbooks |
 
 For deep template issues, run with traceback details:
 
