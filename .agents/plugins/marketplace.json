@@ -1,20 +1,20 @@
 {
-  "name": "ansible-codex",
-  "interface": {
-    "displayName": "Ansible Codex"
-  },
-  "plugins": [
-    {
-      "name": "ansible-codex",
-      "source": {
-        "source": "local",
-        "path": "./"
-      },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Developer Tools"
-    }
-  ]
+	"name": "ansible-codex",
+	"interface": {
+		"displayName": "Ansible Codex"
+	},
+	"plugins": [
+		{
+			"name": "ansible-codex",
+			"source": {
+				"source": "local",
+				"path": "./"
+			},
+			"policy": {
+				"installation": "AVAILABLE",
+				"authentication": "ON_INSTALL"
+			},
+			"category": "Developer Tools"
+		}
+	]
 }

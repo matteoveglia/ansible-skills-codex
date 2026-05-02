@@ -1,38 +1,35 @@
 {
-  "name": "ansible-codex",
-  "version": "1.0.0",
-  "description": "Reusable Ansible automation skills for Codex: playbook development, debugging, shell conversion, and guided setup.",
-  "author": {
-    "name": "sigridjineth"
-  },
-  "homepage": "https://github.com/sigridjineth/hello-ansible-skills",
-  "repository": "https://github.com/sigridjineth/hello-ansible-skills",
-  "license": "MIT",
-  "keywords": [
-    "ansible",
-    "codex",
-    "playbook",
-    "automation",
-    "devops",
-    "infrastructure",
-    "iac"
-  ],
-  "skills": "./skills/",
-  "interface": {
-    "displayName": "Ansible Codex",
-    "shortDescription": "Ansible playbook, debugging, conversion, and setup skills for Codex.",
-    "longDescription": "A Codex plugin that packages focused Ansible skills for creating playbooks and roles, diagnosing failures, converting shell automation into idempotent tasks, and guiding new project setup.",
-    "developerName": "sigridjineth",
-    "category": "Developer Tools",
-    "capabilities": [
-      "Read",
-      "Write"
-    ],
-    "defaultPrompt": [
-      "Use Ansible Codex to create an idempotent playbook for my infrastructure task.",
-      "Use Ansible Codex to debug this failing playbook output.",
-      "Use Ansible Codex to convert this shell setup script into Ansible."
-    ],
-    "brandColor": "#0A66C2"
-  }
+	"name": "ansible-codex",
+	"version": "1.0.0",
+	"description": "Reusable Ansible automation skills for Codex: playbook development, debugging, shell conversion, and guided setup.",
+	"author": {
+		"name": "sigridjineth"
+	},
+	"homepage": "https://github.com/sigridjineth/hello-ansible-skills",
+	"repository": "https://github.com/sigridjineth/hello-ansible-skills",
+	"license": "MIT",
+	"keywords": [
+		"ansible",
+		"codex",
+		"playbook",
+		"automation",
+		"devops",
+		"infrastructure",
+		"iac"
+	],
+	"skills": "./skills/",
+	"interface": {
+		"displayName": "Ansible Codex",
+		"shortDescription": "Ansible playbook, debugging, conversion, and setup skills for Codex.",
+		"longDescription": "A Codex plugin that packages focused Ansible skills for creating playbooks and roles, diagnosing failures, converting shell automation into idempotent tasks, and guiding new project setup.",
+		"developerName": "sigridjineth",
+		"category": "Developer Tools",
+		"capabilities": ["Read", "Write"],
+		"defaultPrompt": [
+			"Use Ansible Codex to create an idempotent playbook for my infrastructure task.",
+			"Use Ansible Codex to debug this failing playbook output.",
+			"Use Ansible Codex to convert this shell setup script into Ansible."
+		],
+		"brandColor": "#0A66C2"
+	}
 }
