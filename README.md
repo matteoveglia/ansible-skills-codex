@@ -8,6 +8,8 @@ This repository is a Codex plugin. It packages focused Ansible skills that Codex
 
 The plugin is intentionally instruction-only. It does not bundle MCP servers, app connectors, lab virtual machines, or generated project templates.
 
+The repository root acts as a Codex marketplace. The installable plugin itself lives under `plugins/ansible-codex`.
+
 ## Installation
 
 ### From GitHub
@@ -108,29 +110,31 @@ Help me set up Ansible for my 5 Ubuntu servers step by step
 
 ```
 ansible-codex/
-├── .codex-plugin/
-│   └── plugin.json          # Codex plugin manifest
 ├── .agents/
 │   └── plugins/
 │       └── marketplace.json # Repo-local Codex marketplace
-├── skills/
-│   ├── ansible-playbook/
-│   │   └── SKILL.md
-│   ├── ansible-debug/
-│   │   └── SKILL.md
-│   ├── ansible-convert/
-│   │   └── SKILL.md
-│   └── ansible-interactive/
-│       └── SKILL.md
+├── plugins/
+│   └── ansible-codex/
+│       ├── .codex-plugin/
+│       │   └── plugin.json  # Codex plugin manifest
+│       └── skills/
+│           ├── ansible-playbook/
+│           │   └── SKILL.md
+│           ├── ansible-debug/
+│           │   └── SKILL.md
+│           ├── ansible-convert/
+│           │   └── SKILL.md
+│           └── ansible-interactive/
+│               └── SKILL.md
 ├── README.md
 └── LICENSE
 ```
 
 ## Codex Plugin Files
 
-- `.codex-plugin/plugin.json` is the required Codex plugin manifest.
-- `.agents/plugins/marketplace.json` exposes this repository as a local Codex marketplace for development and testing.
-- `skills/*/SKILL.md` contains the reusable skill instructions and trigger descriptions.
+- `plugins/ansible-codex/.codex-plugin/plugin.json` is the plugin manifest Codex installs.
+- `.agents/plugins/marketplace.json` exposes this repository as a Codex marketplace and points to `./plugins/ansible-codex`.
+- `plugins/ansible-codex/skills/*/SKILL.md` contains the reusable skill instructions and trigger descriptions.
 
 ## Contributing
 
