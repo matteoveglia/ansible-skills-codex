@@ -1,35 +1,43 @@
-# Ansible Skills for Claude Code
+# Ansible Codex Plugin
 
-Ansible automation skills for Claude Code: playbook development, debugging, shell conversion, and interactive workflows.
+Reusable Ansible automation skills for Codex: playbook development, debugging, shell conversion, and guided setup.
+
+## What This Provides
+
+This repository is a Codex plugin. It packages focused Ansible skills that Codex can invoke explicitly with `$` or select automatically when the task matches a skill description.
+
+The plugin is intentionally instruction-only. It does not bundle MCP servers, app connectors, lab virtual machines, or generated project templates.
 
 ## Installation
 
-### From GitHub (recommended)
+### From GitHub
 
 ```bash
-# Add the marketplace
-/plugin marketplace add sigridjineth/hello-ansible-skills
-
-# Install the plugin
-/plugin install ansible-skills@hello-ansible-skills
+codex plugin marketplace add sigridjineth/hello-ansible-skills
 ```
 
-### Manual Installation
+Then open Codex, run `/plugins`, choose the `Ansible Codex` marketplace, and install `ansible-codex`.
 
-Clone the repository and symlink to your Claude plugins directory:
+### Local Development
+
+Clone the repository and add it as a local marketplace:
 
 ```bash
 git clone https://github.com/sigridjineth/hello-ansible-skills.git
-ln -s $(pwd)/hello-ansible-skills ~/.claude/plugins/ansible-skills
+cd hello-ansible-skills
+codex plugin marketplace add ./
 ```
+
+Restart Codex, run `/plugins`, then install or enable `ansible-codex`.
 
 ### Verify Installation
 
-Run `/help` in Claude Code. You should see skills like:
-- `ansible-skills:ansible-playbook`
-- `ansible-skills:ansible-debug`
-- `ansible-skills:ansible-convert`
-- `ansible-skills:ansible-interactive`
+In Codex, type `$` or run `/skills`. You should see skills like:
+
+- `$ansible-playbook`
+- `$ansible-debug`
+- `$ansible-convert`
+- `$ansible-interactive`
 
 ## Skills Included
 
@@ -77,32 +85,34 @@ Step-by-step guided development. Use when starting a new Ansible project from sc
 ## Usage Examples
 
 **Create a playbook:**
-```
+```text
 Create a playbook that installs nginx and configures it as a reverse proxy
 ```
 
 **Convert a shell script:**
-```
+```text
 Convert this deployment script to Ansible: [paste script]
 ```
 
 **Debug an error:**
-```
+```text
 My playbook fails with "UNREACHABLE" - help me debug
 ```
 
 **Start from scratch:**
-```
+```text
 Help me set up Ansible for my 5 Ubuntu servers step by step
 ```
 
 ## Repository Structure
 
 ```
-hello-ansible-skills/
-├── .claude-plugin/
-│   ├── plugin.json          # Plugin metadata
-│   └── marketplace.json     # Marketplace configuration
+ansible-codex/
+├── .codex-plugin/
+│   └── plugin.json          # Codex plugin manifest
+├── .agents/
+│   └── plugins/
+│       └── marketplace.json # Repo-local Codex marketplace
 ├── skills/
 │   ├── ansible-playbook/
 │   │   └── SKILL.md
@@ -112,14 +122,15 @@ hello-ansible-skills/
 │   │   └── SKILL.md
 │   └── ansible-interactive/
 │       └── SKILL.md
-├── my-ansible/              # Example Ansible project
-│   ├── ansible.cfg
-│   ├── inventory
-│   ├── roles/
-│   └── docs/                # Ansible tutorial (12 sections)
 ├── README.md
 └── LICENSE
 ```
+
+## Codex Plugin Files
+
+- `.codex-plugin/plugin.json` is the required Codex plugin manifest.
+- `.agents/plugins/marketplace.json` exposes this repository as a local Codex marketplace for development and testing.
+- `skills/*/SKILL.md` contains the reusable skill instructions and trigger descriptions.
 
 ## Contributing
 

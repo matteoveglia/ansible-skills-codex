@@ -1,8 +1,0 @@
----
-# Playbook using roles: section with variable override
-- hosts: web
-  roles:
-    - role: my-role
-      vars:
-        web_message: "Custom Message Override!"
-        web_root: /tmp/custom_web
