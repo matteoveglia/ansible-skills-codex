@@ -1,7 +1,7 @@
 {
 	"name": "ansible-codex",
-	"version": "1.0.0",
-	"description": "Reusable Ansible automation skills for Codex: playbook development, debugging, shell conversion, and guided setup.",
+	"version": "1.1.0",
+	"description": "Reusable Ansible automation skills for Codex: playbook development, debugging, shell conversion, guided setup, linting, secrets, and collection management.",
 	"author": {
 		"name": "matteoveglia"
 	},
@@ -12,6 +12,9 @@
 		"ansible",
 		"codex",
 		"playbook",
+		"ansible-lint",
+		"vault",
+		"collections",
 		"automation",
 		"devops",
 		"infrastructure",
@@ -20,15 +23,17 @@
 	"skills": "./skills/",
 	"interface": {
 		"displayName": "Ansible Codex",
-		"shortDescription": "Ansible playbook, debugging, conversion, and setup skills for Codex.",
-		"longDescription": "A Codex plugin that packages focused Ansible skills for creating playbooks and roles, diagnosing failures, converting shell automation into idempotent tasks, and guiding new project setup.",
+		"shortDescription": "Ansible playbook, debugging, linting, secrets, collections, conversion, and setup skills for Codex.",
+		"longDescription": "A Codex plugin that packages focused Ansible skills for creating playbooks and roles, diagnosing failures, converting shell automation into idempotent tasks, validating content with ansible-lint, managing secrets with Vault, handling collections, and guiding new project setup.",
 		"developerName": "matteoveglia",
 		"category": "Developer Tools",
 		"capabilities": ["Read", "Write"],
 		"defaultPrompt": [
 			"Use Ansible Codex to create an idempotent playbook for my infrastructure task.",
 			"Use Ansible Codex to debug this failing playbook output.",
-			"Use Ansible Codex to convert this shell setup script into Ansible."
+			"Use Ansible Codex to convert this shell setup script into Ansible.",
+			"Use Ansible Codex to lint and validate this Ansible role.",
+			"Use Ansible Codex to move these secrets into Ansible Vault."
 		],
 		"brandColor": "#0A66C2"
 	}

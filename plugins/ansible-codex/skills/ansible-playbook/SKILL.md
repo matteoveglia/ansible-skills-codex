@@ -1,52 +1,88 @@
 ---
 name: ansible-playbook
-description: Use when creating playbooks, roles, or inventory files. Use when automating infrastructure with Ansible. Use when encountering YAML syntax errors, module failures, or variable precedence issues.
+description: "Use when: creating Ansible playbooks, roles, tasks, handlers, inventories, group_vars, host_vars, ansible.cfg, or reusable automation. Covers idempotency, FQCN modules, collections, variables, handlers, check mode, Ansible 12 templating compatibility, and validation workflows."
+argument-hint: "Describe the infrastructure task, target OSes, inventory shape, and desired playbook or role output."
 ---
 
 # Ansible Playbook Development
 
 ## Overview
 
-Ansible playbooks declare desired system state rather than imperative commands. The core principle is idempotency: running a playbook multiple times produces the same result without unintended changes.
+Ansible playbooks declare desired system state rather than imperative command sequences. Optimize for idempotency, readable task names, explicit inputs, and validation before execution. Prefer built-in or collection modules over `command`, `shell`, or `raw`.
 
 ## When to Use
 
 - Creating new playbooks or roles
 - Writing inventory files
-- Debugging YAML syntax errors
-- Troubleshooting module parameter issues
+- Designing reusable `group_vars`, `host_vars`, defaults, handlers, and templates
+- Choosing modules and collections
+- Reviewing YAML, conditionals, variables, and handler behavior
 - Understanding variable precedence
-- Converting shell scripts to Ansible
+- Preparing playbooks for Ansible 12 / ansible-core 2.19+ templating behavior
 
-## Quick Reference
-
-### Project Structure
+## Project Structure
 
 ```
 project/
-├── ansible.cfg          # Configuration
-├── inventory            # Host definitions
-├── group_vars/          # Group variables
-├── host_vars/           # Host-specific vars
-├── roles/               # Reusable roles
-└── playbooks/           # Playbook files
+├── ansible.cfg
+├── requirements.yml
+├── inventories/
+│   ├── production/
+│   │   ├── hosts.yml
+│   │   ├── group_vars/
+│   │   └── host_vars/
+│   └── staging/
+├── playbooks/
+│   └── site.yml
+└── roles/
+    └── app/
+        ├── defaults/main.yml
+        ├── handlers/main.yml
+        ├── tasks/main.yml
+        ├── templates/
+        └── meta/main.yml
 ```
 
-### Essential ansible.cfg
+Use a single top-level inventory for small projects. Use `inventories/<env>/` when environments need separate variables or dynamic inventory config.
+
+## Essential ansible.cfg
 
 ```ini
 [defaults]
-inventory = ./inventory
+inventory = ./inventories/staging/hosts.yml
 roles_path = ./roles
-host_key_checking = False
-stdout_callback = yaml
+stdout_callback = ansible.builtin.default
+callback_result_format = yaml
+show_task_path_on_failure = True
+retry_files_enabled = False
 
 [privilege_escalation]
-become = True
+become = False
 become_method = sudo
 ```
 
-### Module Patterns
+Set `become: true` at the play or task level when elevated privileges are actually required. Avoid disabling `host_key_checking` except for disposable labs.
+
+## Collection Requirements
+
+Pin non-core collections so every controller uses the same modules:
+
+```yaml
+---
+collections:
+  - name: community.general
+    version: ">=10.0.0,<12.0.0"
+  - name: ansible.posix
+    version: ">=1.6.0,<2.0.0"
+```
+
+Install with:
+
+```bash
+ansible-galaxy collection install -r requirements.yml
+```
+
+## Module Patterns
 
 | Operation | Module | Key Parameters |
 |-----------|--------|----------------|
@@ -54,20 +90,58 @@ become_method = sudo
 | Copy file | `ansible.builtin.copy` | `src`, `dest`, `mode` |
 | Template | `ansible.builtin.template` | `src`, `dest`, variables in `.j2` |
 | Install package | `ansible.builtin.package` | `name`, `state: present` |
-| Manage service | `ansible.builtin.service` | `name`, `state`, `enabled` |
-| Run command | `ansible.builtin.command` | `cmd`, register result, set `changed_when` |
+| Manage systemd unit | `ansible.builtin.systemd_service` | `name`, `state`, `enabled`, `daemon_reload` |
+| Manage generic service | `ansible.builtin.service` | `name`, `state`, `enabled` |
+| APT repository | `ansible.builtin.deb822_repository` | `name`, `uris`, `suites`, `components`, `signed_by` |
+| Wait for connection | `ansible.builtin.wait_for_connection` | `timeout`, `connect_timeout` |
+| Validate condition | `ansible.builtin.assert` | `that`, `fail_msg`, `success_msg` |
+| Run command | `ansible.builtin.command` | `cmd`, `creates`/`removes`, register result, `changed_when` |
 
-### Variable Precedence (lowest to highest)
+Use FQCNs (`ansible.builtin.copy`, `community.general.ufw`) in generated content. They make docs lookup precise and avoid name collisions.
+
+## Variable Precedence
+
+Lowest to highest for common playbook work:
 
 1. Role defaults (`defaults/main.yml`)
-2. Inventory group_vars
-3. Inventory host_vars
+2. Inventory group vars
+3. Inventory host vars
 4. Playbook vars
 5. Role vars (`vars/main.yml`)
 6. Task vars
 7. Extra vars (`-e`)
 
-### Handlers
+Avoid role `vars/main.yml` for values users should override. Prefer role defaults and document expected variables in `README.md` or `meta/argument_specs.yml` for roles.
+
+## Ansible 12 / ansible-core 2.19+ Templating
+
+Modern Ansible is stricter about templates and conditionals. Generate content with these rules:
+
+- `when`, `failed_when`, `changed_when`, and `assert.that` are raw Jinja expressions. Do not wrap variables in `{{ }}` there.
+- Conditionals must produce booleans, not truthy strings, lists, or dictionaries.
+- Convert types explicitly with filters like `| bool`, `| int`, `| string`, or `| list` when needed.
+- Use `default(omit)` when an optional module argument should be omitted.
+- Do not construct dynamic expressions with nested templates. Refactor to explicit variables or separate tasks.
+
+Good:
+
+```yaml
+- ansible.builtin.assert:
+    that:
+      - inventory_hostname | length > 0
+      - app_port | int > 0
+```
+
+Avoid:
+
+```yaml
+- ansible.builtin.assert:
+    that:
+      - inventory_hostname
+      - "{{ app_port }} > 0"
+```
+
+## Handlers
 
 ```yaml
 tasks:
@@ -75,21 +149,26 @@ tasks:
     ansible.builtin.template:
       src: app.conf.j2
       dest: /etc/app.conf
+      mode: '0644'
     notify: Restart app
 
 handlers:
   - name: Restart app
-    ansible.builtin.service:
+    ansible.builtin.systemd_service:
       name: app
       state: restarted
 ```
 
-### Error Handling
+Use `force_handlers: true` when a changed configuration must always trigger its restart even if a later task fails, as long as the host remains reachable.
+
+## Error Handling
 
 ```yaml
 - block:
     - name: Risky operation
       ansible.builtin.command: /opt/app/upgrade.sh
+      register: upgrade_result
+      changed_when: "'upgraded' in upgrade_result.stdout"
   rescue:
     - name: Handle failure
       ansible.builtin.debug:
@@ -101,23 +180,32 @@ handlers:
         state: absent
 ```
 
+Use `ignore_unreachable` for unreachable hosts; `ignore_errors` does not handle connection failures, undefined variables, missing packages, or syntax errors.
+
 ## Common Mistakes
 
 | Mistake | Fix |
 |---------|-----|
-| Using short module names | Always use FQCN: `ansible.builtin.copy` not `copy` |
+| Using short module names | Use FQCN: `ansible.builtin.copy` not `copy` |
 | Hardcoded values | Extract to variables in `defaults/main.yml` |
-| Missing `changed_when` on commands | Add `changed_when: "'created' in result.stdout"` |
+| Missing `changed_when` on commands | Add explicit change detection or use module idempotency |
 | Forgetting handler flush | Use `meta: flush_handlers` when needed before dependent tasks |
 | YAML indentation errors | Use 2 spaces, never tabs |
 | Colon in unquoted string | Quote values containing `: ` |
+| Secrets in vars or templates | Use `ansible-vault`, external secret lookups, `no_log: true`, and `diff: false` |
+| Global `become = True` | Set privilege escalation only where needed |
+| `stdout_callback = yaml` | Use `ansible.builtin.default` with `callback_result_format = yaml` |
+| Truthy string conditionals | Make conditions explicit booleans |
 
 ## Verification Commands
 
 ```bash
-ansible-playbook --syntax-check playbook.yml  # Check YAML
-ansible-playbook --check playbook.yml         # Dry run
-ansible-playbook --check --diff playbook.yml  # Show file changes
-ansible-inventory --list                       # Verify inventory
-ansible-inventory --host hostname             # Check host vars
+ansible-lint .
+ansible-playbook --syntax-check playbooks/site.yml
+ansible-inventory -i inventories/staging/hosts.yml --list
+ansible-playbook -i inventories/staging/hosts.yml playbooks/site.yml --check --diff --limit host1
+ansible-playbook -i inventories/staging/hosts.yml playbooks/site.yml --limit host1
+ansible-playbook -i inventories/staging/hosts.yml playbooks/site.yml --limit host1
 ```
+
+The second real run should report `changed=0` unless the playbook intentionally manages changing state.

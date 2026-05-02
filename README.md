@@ -1,6 +1,6 @@
 # Ansible Codex Plugin
 
-Reusable Ansible automation skills for Codex: playbook development, debugging, shell conversion, and guided setup.
+Reusable Ansible automation skills for Codex: playbook development, debugging, shell conversion, guided setup, linting, secrets, and collection management.
 
 ## What This Provides
 
@@ -40,6 +40,9 @@ In Codex, type `$` or run `/skills`. You should see skills like:
 - `$ansible-debug`
 - `$ansible-convert`
 - `$ansible-interactive`
+- `$ansible-lint`
+- `$ansible-vault`
+- `$ansible-collections`
 
 ## Skills Included
 
@@ -52,6 +55,8 @@ Core playbook development reference. Use when creating playbooks, roles, or inve
 - Module patterns with FQCN (Fully Qualified Collection Names)
 - Variable precedence rules
 - Handlers and error handling
+- Collection requirements and modern callback configuration
+- Ansible 12 / ansible-core 2.19+ templating compatibility
 - Common mistakes and fixes
 
 ### ansible-debug
@@ -62,6 +67,8 @@ Troubleshooting guide for Ansible errors. Use when playbooks fail with connectio
 - Error category diagnosis (connection, auth, module, syntax)
 - Verbosity levels and debugging commands
 - Common error patterns and solutions
+- Privilege escalation and unreachable-host handling
+- Ansible 12 templating and conditional errors
 - Performance debugging
 
 ### ansible-convert
@@ -73,6 +80,8 @@ Shell script to Ansible conversion. Use when migrating bash automation to idempo
 - Control flow conversion (conditionals, loops)
 - When to use shell module
 - Variable extraction patterns
+- Dockerfile and runbook conversion notes
+- Validation and idempotency workflow
 
 ### ansible-interactive
 
@@ -83,6 +92,37 @@ Step-by-step guided development. Use when starting a new Ansible project from sc
 - Project setup workflow
 - Connectivity testing before playbooks
 - Incremental development with validation
+- Vault, requirements.yml, and safe first-run practices
+
+### ansible-lint
+
+Validation workflow for playbooks, roles, inventories, and CI. Use when checking generated or existing Ansible content before execution.
+
+**Covers:**
+- ansible-lint and syntax-check order
+- Common rule fixes such as FQCN, no-changed-when, and risky file permissions
+- Ansible 12 compatibility checks
+- Minimal CI example
+
+### ansible-vault
+
+Secrets workflow for encrypted variables and safe task output. Use when adding credentials, migrating plaintext secrets, or designing CI decryption.
+
+**Covers:**
+- Vault file layout and naming conventions
+- `--ask-vault-pass` and `--vault-id` workflows
+- `no_log: true` and `diff: false`
+- Secret migration and troubleshooting
+
+### ansible-collections
+
+Collection dependency workflow. Use when choosing modules, writing `requirements.yml`, pinning versions, or fixing module resolution errors.
+
+**Covers:**
+- Galaxy and Automation Hub dependency patterns
+- FQCN usage and `ansible-doc` lookup
+- Version pinning and adjacent collections
+- Upgrade and porting workflow
 
 ## Usage Examples
 
@@ -106,6 +146,21 @@ My playbook fails with "UNREACHABLE" - help me debug
 Help me set up Ansible for my 5 Ubuntu servers step by step
 ```
 
+**Validate content:**
+```text
+Run an Ansible validation audit on this role and fix the ansible-lint failures
+```
+
+**Handle secrets:**
+```text
+Move these plaintext inventory passwords into Ansible Vault and prevent them from appearing in diffs
+```
+
+**Manage dependencies:**
+```text
+Add the collections needed for these modules and pin them in requirements.yml
+```
+
 ## Repository Structure
 
 ```
@@ -124,7 +179,13 @@ ansible-codex/
 │           │   └── SKILL.md
 │           ├── ansible-convert/
 │           │   └── SKILL.md
-│           └── ansible-interactive/
+│           ├── ansible-interactive/
+│           │   └── SKILL.md
+│           ├── ansible-lint/
+│           │   └── SKILL.md
+│           ├── ansible-vault/
+│           │   └── SKILL.md
+│           └── ansible-collections/
 │               └── SKILL.md
 ├── README.md
 └── LICENSE
